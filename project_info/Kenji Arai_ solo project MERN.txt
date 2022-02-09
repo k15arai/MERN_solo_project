@@ -1,0 +1,16 @@
+﻿Name: Kenji Arai
+Project Title: Life Goals
+Project Stack: MERN
+GitHub Repo Link: https://github.com/k15arai/MERN_solo_project
+
+
+Project Description: 
+Goal tracker that allows users to create, update, and delete goals. It will also allow users to interact with goals submitted by other users through comments.  
+
+
+New Programming Concept(s) I'm Planning to Learn: 
+I never got to implement login and registration during the stack. I also did not get a chance to really implement a like button button. I would also like to see how different models interact with each other in an application. I would also like to try and implement more components in React to attempt more styling (I am admittedly not very comfortable with React, but will try).
+
+
+Product Backlog (If I have more time after completing my MVP, I'll start to work on...)
+* I am not entirely sure how to do a like button at this very moment, but would like to try. I also might want to attempt some kind of additional middleware in addition to auth to make sure users only have access to stuff they created.

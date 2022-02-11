@@ -32,6 +32,20 @@ const GoalSchema = new mongoose.Schema(
     pictureUrl: {
       type: String,
     },
+    // add the user.id for the user that created this object
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      // comes from user model
+      ref: "User",
+    },
+    // array of comment objects
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
+    // add likes to the goal
   },
   { timestamps: true }
 );

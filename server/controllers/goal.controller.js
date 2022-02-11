@@ -1,4 +1,5 @@
 const Goal = require("../models/goal.model");
+const jwt = require("jsonwebtoken");
 
 // Test Message
 const index = (req, res) => {
@@ -9,70 +10,131 @@ const index = (req, res) => {
 
 // CREATE
 const addNewGoal = (req, res) => {
-  //create a goal in the DB
   console.log(req.body);
-  Goal.create(req.body)
-    .then((newlyCreatedGoal) => res.json({ goal: newlyCreatedGoal }))
+  //create a new "goal" object to eventually save in the DB
+  const goal = new Goal(req.body);
+  // complete true gets everything
+  const decodedJwt = jwt.decode(req.cookies.usertoken, { complete: true });
+  // give the "goal" object a user_id value from the usertoken
+  goal.user_id = decodedJwt.payload._id;
+
+  // save "goal" object with added user_id
+  goal
+    .save()
+    .then((newGoal) => {
+      console.log(newGoal);
+      res.json(newGoal);
+    })
     .catch((err) => {
-      console.log("error in create: " + err);
+      console.log("error in create goal: " + err);
       res.status(400).json(err);
     });
 };
 
 // READ ALL
 const findAllGoals = (req, res) => {
-  Goal.find()
-    .then((allGoals) => res.json(allGoals))
-    .catch((err) =>
+  Goal.find({})
+    .populate("user_id", "firstName _id")
+    // sort by something
+    .then((allGoals) => {
+      console.log("Show all goals section");
+      res.json(allGoals);
+    })
+    .catch((err) => {
+      console.log("In find all goals error section");
+      res.status(400).json({
+        message: "Something went wrong in find all goals",
+        error: err,
+      });
+    });
+};
+
+// READ ALL BY USER
+const getAllGoalsByUser = (req, res) => {
+  Goal.find({ user_id: req.params.userId })
+    .populate("user_id", "firstName _id email")
+    .populate({
+      path: "comments",
+      options: { limit: 1 },
+      populate: { path: "user_id" },
+    })
+    .then((allUserGoals) => {
+      console.log("success - returning all user goals");
+      res.json(allUserGoals);
+    })
+    .catch((err) => {
+      console.log(err);
       res
         .status(400)
-        .json({ message: "Something went wrong in find all goals", error: err })
-    );
+        .json("something went wrong in getting goals for user:" + err);
+    });
 };
 
 // READ ONE
 const findOneGoal = (req, res) => {
+  // get a single goal by ID - 'id' is from routes
+  console.log(req.params.id);
   Goal.findOne({ _id: req.params.id })
+    // connect data using populate
+    // can grab the entire object or limit
+    .populate("user_id", "_id firstName email")
+    // populate comments AI
+    // then / catch
     .then((oneSingleGoal) => {
-      console.log("SUCCESS CASE - FOUND ONE");
-      res.json(oneSingleGoal);
+      console.log("Success - found one goal section");
+      res.status(200).json(oneSingleGoal);
     })
     .catch((err) => {
-      console.log("ERROR CASE - COULDN'T FIND ONE");
+      console.log("Error - could not find one goal section");
       res.status(400).json(err);
     });
 };
 
 // UPDATE ONE
 const updateOneGoal = (req, res) => {
-  // use id in url to query document you want to update
+  // update a single goal by ID - passed through params
+  // "body" should be on the request
+  // findOneAndUpdate notes
+  // first arg use id in url to query document you want to update
   // second arg is the info from that queried doc to change
-  const { body } = req;
-  // const { dishOne, dishTwo, dishThree } = body;
-  // const dishArr = [dishOne, dishTwo, dishThree];
-  // body.dishes = dishArr;
 
-  Goal.findOneAndUpdate({ _id: req.params.id }, req.body, {
+  Goal.findOneAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   })
-    .then((updatedGoal) => res.json(updatedGoal))
-    .catch((err) => res.status(400).json(err));
+    .then((updatedGoal) => {
+      console.log("In goal updated section");
+      res.status(200).json(updatedGoal);
+    })
+    .catch((err) => {
+      console.log("error in the update one goal section: " + err);
+      res.status(400).json(err);
+    });
 };
 
 // DELETE ONE
 const deleteOneGoal = (req, res) => {
   Goal.deleteOne({ _id: req.params.id })
-    .then((deleteConfirmation) => res.json(deleteConfirmation))
-    .catch((err) =>
-      res.status(400).json({ message: "Something went wrong", error: err })
-    );
+    .then((deleteConfirmation) => {
+      console.log("In delete goal section");
+      res.status(200).json(deleteConfirmation);
+    })
+    .catch((err) => {
+      console.log("Error in the delete goal section" + err);
+      res
+        .status(400)
+        .json({ message: "Something went wrong in delete goal", error: err });
+    });
 };
+
+// ADD LIKE
+// REMOVE LIKE
 
 module.exports = {
   index,
   addNewGoal,
   findAllGoals,
+  getAllGoalsByUser,
   findOneGoal,
   updateOneGoal,
   deleteOneGoal,

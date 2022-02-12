@@ -25,4 +25,10 @@ module.exports = (app) => {
     authorize,
     GoalController.deleteOneGoal
   );
+  app.put("/api/like/goals/:id", authenticate, GoalController.likeGoal);
+  app.put(
+    "/api/removelike/goals/:id",
+    authenticate,
+    GoalController.removeGoalLike
+  );
 };

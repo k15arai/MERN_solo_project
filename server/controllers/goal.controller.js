@@ -127,8 +127,102 @@ const deleteOneGoal = (req, res) => {
     });
 };
 
-// ADD LIKE
+// ADD LIKE TO GOAL
+const likeGoal = async (req, res) => {
+  try {
+    // find the Goal
+    const goal = await Goal.findById(req.params.id);
+
+    // complete true gets everything
+    const decodedJwt = jwt.decode(req.cookies.usertoken, { complete: true });
+    // give the goal object a user_id value
+    // const user_id = decodedJwt.payload._id;
+    if (
+      goal.likes.filter((like) => like._id.toString() == decodedJwt.payload._id)
+        .length > 0
+    ) {
+      return res
+        .status(400)
+        .json({ msg: "Goal has already been liked by user" });
+    }
+
+    // update a single goal by ID - should have the id passed in through the parameter
+    // and the body should also be on the request from the front-end
+    // findByIdAndUpdate has options
+    console.log(req.params.id);
+    // console.log(req.body);
+
+    Goal.findByIdAndUpdate(
+      req.params.id,
+      // this is the data that we want to update
+      // take the decodedJwt.payload._id and push it into the likes array
+      {
+        // syntax for MongoDB
+        $push: { likes: decodedJwt.payload._id },
+      },
+      {
+        new: true,
+        // change from "runValidators: true" to "useFindAndModify: false"
+        useFindAndModify: false,
+      }
+    )
+      .populate("likes")
+      .then((updatedGoal) => {
+        console.log(updatedGoal);
+        res.json(updatedGoal);
+      });
+  } catch (err) {
+    console.log("error in update likes goal: " + err);
+    res.json(err);
+  }
+};
 // REMOVE LIKE
+const removeGoalLike = async (req, res) => {
+  try {
+    const goal = await Goal.findById(req.params.id);
+
+    // complete true gets everything
+    const decodedJwt = jwt.decode(req.cookies.usertoken, { complete: true });
+    // give the goal object a user_id value
+    // const user_id = decodedJwt.payload._id;
+    // Check if the user has not already liked the post
+    // if (
+    //   goal.likes.filter((like) => like._id.toString() == decodedJwt.payload._id)
+    //     .length > 0
+    // )
+    if (
+      goal.likes.filter((like) => like._id.toString() == decodedJwt.payload._id)
+        .length === 0
+    ) {
+      return res
+        .status(400)
+        .json({ msg: "Goal has not yet been liked by user" });
+    }
+
+    Goal.findByIdAndUpdate(
+      req.params.id,
+      // this is the data that we want to update
+      // take the decodedJwt.payload._id and push it into the likes array
+      {
+        // syntax for MongoDB
+        $pull: { likes: decodedJwt.payload._id },
+      },
+      {
+        new: true,
+        // change from "runValidators: true" to "useFindAndModify: false"
+        useFindAndModify: false,
+      }
+    )
+      .populate("likes", "_id")
+      .then((updatedGoal) => {
+        console.log(updatedGoal);
+        res.json(updatedGoal);
+      });
+  } catch (err) {
+    console.log("error in update likes skiff: " + err);
+    res.json(err);
+  }
+};
 
 module.exports = {
   index,
@@ -138,4 +232,6 @@ module.exports = {
   findOneGoal,
   updateOneGoal,
   deleteOneGoal,
+  likeGoal,
+  removeGoalLike,
 };

@@ -45,7 +45,12 @@ const GoalSchema = new mongoose.Schema(
         ref: "Comment",
       },
     ],
-    // add likes to the goal
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -176,7 +176,7 @@ const likeGoal = async (req, res) => {
     res.json(err);
   }
 };
-// REMOVE LIKE
+// REMOVE LIKE FROM GOAL
 const removeGoalLike = async (req, res) => {
   try {
     const goal = await Goal.findById(req.params.id);

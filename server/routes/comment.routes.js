@@ -2,6 +2,7 @@
 const CommentController = require("../controllers/comment.controller");
 // add in the JWT middleware function authenticate - this was named in jwt.config.js
 const { authenticate } = require("../config/jwt.config");
+const { authorizeComment } = require("../config/authComment.config");
 
 // create the valid routes - always start with /api
 module.exports = (app) => {
@@ -11,7 +12,10 @@ module.exports = (app) => {
     authenticate,
     CommentController.createComment
   );
-  //   app.get("/api/goals/:id", GoalController.findOneGoal);
-  //   app.put("/api/goals/:id", authenticate, GoalController.updateOneGoal);
-  //   app.delete("/api/goals/:id", authenticate, SkiffsController.deleteOneGoal);
+  app.delete(
+    "/api/comments/:id",
+    authenticate,
+    authorizeComment,
+    CommentController.deleteOneComment
+  );
 };

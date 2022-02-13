@@ -12,10 +12,15 @@ const authorizeComment = async (req, res, next) => {
   console.log(decodedJwt.payload._id);
   console.log("check 1");
   const commentToCheck = await Comment.findById(params.id);
-  console.log(commentToCheck.user_id._id.toString());
+  // console.log(commentToCheck.user_id._id.toString());
   console.log("check 2");
 
   try {
+    if (commentToCheck === null) {
+      console.log("could not find a comment");
+      res.status(400).json({ error: "did not find a comment" });
+      return;
+    }
     if (
       decodedJwt.payload._id.toString() ===
       commentToCheck.user_id._id.toString()

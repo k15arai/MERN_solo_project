@@ -35,6 +35,8 @@ const addNewGoal = (req, res) => {
 const findAllGoals = (req, res) => {
   Goal.find({})
     .populate("user_id", "firstName _id")
+    .populate("comments", "_id comment")
+    .populate("likes", "user_id")
     // sort by something
     .then((allGoals) => {
       console.log("Show all goals section");

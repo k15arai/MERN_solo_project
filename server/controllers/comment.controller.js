@@ -50,65 +50,23 @@ const getAllComments = (req, res) => {
     });
 };
 
-//   // Create comment in comments collection
-//   Comment.create(comment)
-//     // skiff id?
-//     .then((newComment) => {
-//       console.log("in create");
-//       console.log(newComment);
-//       // still need to update the Skiff document to include this new comment _id
-//       Skiff.findByIdAndUpdate(
-//         newComment.skiff,
-//         // this is the data that we want to update
-//         // take the newComment._id and push it into the comments array
-//         {
-//           // syntax for MongoDB
-//           $push: { comments: newComment._id },
-//         },
-//         {
-//           new: true,
-//           // change from "runValidators: true" to "useFindAndModify: false"
-//           //
-//           useFindAndModify: false, // by default mongoose will replace the entire object
-//         }
-//       )
-//         .populate("comments", "-_id -__v -createdAt -updatedAt")
-//         .populate("user_id", "-_id -__v -createdAt -updatedAt")
-//         .then((updatedSkiff) => {
-//           console.log("in create comment - adding comment to skiff document");
-//           console.log(updatedSkiff);
-//           // res.json(newComment);
-//           res.json(updatedSkiff);
-//         })
-//         .catch((err) => {
-//           console.log("error found in add comment to skiff:" + err);
-//           res.status(400).json(err);
-//         });
-//     })
-//     .catch((err) => {
-//       console.log("error at the end of create comment section");
-//       console.log(err);
-//       res.status(400).json(err);
-//     });
-// };
-
-// // DELETE ONE
-// const deleteComment = (req, res) => {
-//   // remove a single skiff by ID
-//   console.log(req.params.id);
-//   Comment.findByIdAndRemove(req.params.id)
-//     .then((removedComment) => {
-//       console.log(removedComment);
-//       res.json(removedComment);
-//     })
-//     .catch((err) => {
-//       console.log("error in delete one comment: " + err);
-//       res.json(err);
-//     });
-// };
+// DELETE ONE COMMENT
+const deleteOneComment = (req, res) => {
+  // remove a single comment by ID
+  console.log(req.params.id);
+  Comment.findByIdAndRemove(req.params.id)
+    .then((removedComment) => {
+      console.log("Comment removed");
+      res.json(removedComment);
+    })
+    .catch((err) => {
+      console.log("error in delete one comment: " + err);
+      res.json(err);
+    });
+};
 
 module.exports = {
   getAllComments,
   createComment,
-  // deleteComment,
+  deleteOneComment,
 };

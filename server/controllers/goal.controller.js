@@ -37,6 +37,7 @@ const findAllGoals = (req, res) => {
     .populate("user_id", "firstName _id")
     .populate("comments", "_id comment")
     .populate("likes", "user_id")
+    .sort({ likes: "descending" })
     // sort by something
     .then((allGoals) => {
       console.log("Show all goals section");
@@ -57,9 +58,10 @@ const getAllGoalsByUser = (req, res) => {
     .populate("user_id", "firstName _id email")
     .populate({
       path: "comments",
-      options: { limit: 1 },
+      options: { limit: 2 },
       populate: { path: "user_id" },
     })
+    .sort({ likes: "descending" })
     .then((allUserGoals) => {
       console.log("success - returning all user goals");
       res.json(allUserGoals);
@@ -80,7 +82,11 @@ const findOneGoal = (req, res) => {
     // connect data using populate
     // can grab the entire object or limit
     .populate("user_id", "_id firstName email")
-    // populate comments AI
+    .populate({
+      path: "comments",
+      options: { limit: 5 },
+      populate: { path: "user_id" },
+    })
     // then / catch
     .then((oneSingleGoal) => {
       console.log("Success - found one goal section");

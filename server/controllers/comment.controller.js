@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 
 // CREATE
 const createComment = async (req, res) => {
-  console.log(req);
   const { body, params } = req;
   // begin adding new comment document
   let newComment = new Comment(body);

@@ -16,13 +16,14 @@ const GoalSchema = new mongoose.Schema(
         "You need to input your progress status towards your goal",
       ],
       minlength: [5, "Your goal status must be at least 5 characters long"],
+      maxlength: [280, "Your goal status should be less than 280 characters"],
     },
     // No later than today
     // No earlier than 1990
     targetFinishDate: {
       // need to come in as a date format
       type: Date,
-      //   required: [true, "You must include a finish date"],
+      required: [true, "Your goal must include a target finish date"],
       min: [
         "2020-01-01",
         "Sorry, let's think of goals for the future - please try again",
@@ -30,6 +31,9 @@ const GoalSchema = new mongoose.Schema(
     },
     // completely optional
     pictureUrl: {
+      type: String,
+    },
+    description: {
       type: String,
     },
     // add the user.id for the user that created this object

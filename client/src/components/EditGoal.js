@@ -1,22 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { navigate } from "@reach/router";
 
-const NewGoal = () => {
+const EditGoal = (props) => {
+  const { goalId } = props;
+
   const [goalText, setGoalText] = useState("");
   const [goalStatus, setGoalStatus] = useState("");
   const [targetFinishDate, setTargetFinishDate] = useState("");
   const [pictureUrl, setPictureUrl] = useState("");
   const [description, setDescription] = useState("");
+  const [userId, setUserId] = useState("");
   // expects an object
   const [errs, setErrs] = useState({});
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8000/api/goals/${goalId}`)
+      .then((myGoal) => {
+        console.log(myGoal.data);
+        // setMySkiff(mySkiff.data);
+        setGoalText(myGoal.data.goalText);
+        setGoalStatus(myGoal.data.goalStatus);
+        setTargetFinishDate(
+          new Date(myGoal.data.targetFinishDate).toLocaleDateString("en-us")
+        );
+        setPictureUrl(myGoal.data.pictureUrl);
+        setDescription(myGoal.data.description);
+      })
+      .catch((err) => {});
+  }, [goalId]);
+
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId"));
+    console.log(userId);
+  }, [userId]);
 
   const submitHandler = (event) => {
     event.preventDefault();
     // do something with axios (post)
     axios
-      .post(
-        "http://localhost:8000/api/goals",
+      .put(
+        `http://localhost:8000/api/goals/${goalId}`,
         {
           goalText: goalText,
           goalStatus: goalStatus,
@@ -31,13 +56,13 @@ const NewGoal = () => {
           withCredentials: true,
         }
       )
-      .then((newGoal) => {
-        if (newGoal.data.errors) {
-          console.log(newGoal.data.errors);
-          setErrs(newGoal.data.errors);
+      .then((updatedGoal) => {
+        if (updatedGoal.data.errors) {
+          console.log(updatedGoal.data.errors);
+          setErrs(updatedGoal.data.errors);
         } else {
-          console.log(newGoal.data);
-          navigate(`/goals/${newGoal.data._id}`);
+          console.log(updatedGoal.data);
+          navigate(`/goals/${updatedGoal.data._id}`);
         }
       })
       .catch((err) => {
@@ -47,19 +72,14 @@ const NewGoal = () => {
 
   return (
     <div>
-      <h2>New Goal</h2>
+      <h2>Edit Goal</h2>
       <form onSubmit={submitHandler}>
         <div>
-          <label>What is your goal?</label>
+          <label>What is your goal? - CANNOT EDIT THIS</label>
           {errs.goalText ? (
             <span className='error-text'>{errs.goalText.message}</span>
           ) : null}
-          <input
-            type='text'
-            name='goalText'
-            value={goalText}
-            onChange={(e) => setGoalText(e.target.value)}
-          />
+          <input type='text' name='goalText' value={goalText} readonly />
         </div>
         <div>
           <label>Enter your progress or goal status</label>
@@ -103,10 +123,10 @@ const NewGoal = () => {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <button type='submit'>Add My Goal</button>
+        <button type='submit'>Edit My Goal</button>
         <button onClick={() => navigate("/goals")}>Back to All Goals</button>
       </form>
     </div>
   );
 };
-export default NewGoal;
+export default EditGoal;

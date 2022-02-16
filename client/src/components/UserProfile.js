@@ -72,7 +72,7 @@ const UserProfile = (props) => {
       ))}
       <div>
         <Button
-          variant='contained'
+          variant='outlined'
           color='primary'
           onClick={() => navigate("/goals")}
         >

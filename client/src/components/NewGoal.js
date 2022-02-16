@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { navigate } from "@reach/router";
-import { Button, Typography, Box, TextField } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 
 const NewGoal = () => {
   const [goalText, setGoalText] = useState("");
@@ -106,7 +106,7 @@ const NewGoal = () => {
           Add My Goal
         </Button>
         <Button
-          variant='contained'
+          variant='outlined'
           color='primary'
           onClick={() => navigate("/goals")}
         >

@@ -11,27 +11,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 const Header = () => {
   const [userId, setUserId] = useState("");
-  // const [user, setUser] = useState("");
   const [fakeBoolean, setFakeBoolean] = useState(false);
 
   useEffect(() => {
     setUserId(localStorage.getItem("userId"));
   }, [userId]);
-
-  // useEffect(() => {
-  //   axios
-  //     .get("http://localhost:8000/api/user/loggedin", {
-  //       // pass along the cookie with the request
-  //       withCredentials: true,
-  //     })
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       setUser(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, [setUser]);
 
   const logout = (e) => {
     e.preventDefault();
@@ -95,6 +79,7 @@ const Header = () => {
             <Button
               size='small'
               variant='outlined'
+              color='inherit'
               onClick={() => navigate("/")}
             >
               Login to edit and add goals
@@ -102,26 +87,11 @@ const Header = () => {
             <Button
               size='small'
               variant='outlined'
-              color='secondary'
+              color='inherit'
               onClick={logout}
             >
               Logout
             </Button>
-            {/* {userId ? (
-              <Button
-                variant='outlined'
-                onClick={() => navigate(`/user/goals/${userId}`)}
-              >
-                Profile
-              </Button>
-            ) : null} */}
-            {/* <Button
-              variant='outlined'
-              size='small'
-              onClick={() => navigate(`/user/goals/${userId}`)}
-            >
-              Profile
-            </Button> */}
           </Toolbar>
         </AppBar>
       </Box>

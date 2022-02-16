@@ -23,7 +23,7 @@ const login = (req, res) => {
     .then((user) => {
       if (user === null) {
         // no user was found in the DB with that email address
-        res.status(400).json({ msg: "Invalid login attempt 1" });
+        res.status(400).json({ msg: "Invalid login attempt - err 1" });
       } else {
         // we found the user and so we will need to compare the passwords
         bcrypt
@@ -67,12 +67,12 @@ const login = (req, res) => {
                   },
                 });
             } else {
-              res.status(400).json({ msg: "Invalid login attempt 2" });
+              res.status(400).json({ msg: "Invalid login attempt - err 2" });
             }
           })
           // invalid password - use a generic message to make it harder to hack
           .catch((err) =>
-            res.status(400).json({ msg: "Invalid login attempt 3" })
+            res.status(400).json({ msg: "Invalid login attempt - err 3" })
           );
       }
     })

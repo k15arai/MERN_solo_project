@@ -102,7 +102,7 @@ const updateOneGoal = (req, res) => {
   // first arg use id in url to query document you want to update
   // second arg is the info from that queried doc to change
 
-  Goal.findOneAndUpdate(req.params.id, req.body, {
+  Goal.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   })

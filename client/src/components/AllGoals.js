@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { navigate, Link } from "@reach/router";
+import { navigate } from "@reach/router";
+import { Button, Typography, Grid, Paper } from "@material-ui/core";
+import GoalCard from "./GoalCard";
 
 const AllGoals = (props) => {
   // Array of objects for get all
@@ -47,40 +49,107 @@ const AllGoals = (props) => {
 
   return (
     <div>
-      <h2>All Goals</h2>
+      <Typography variant='h5' color='textPrimary'>
+        All Goals
+      </Typography>
       <div className='center'>
         {userId ? (
-          <button onClick={() => navigate("/goals/new")}>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={() => navigate("/goals/new")}
+          >
             Create New Goal
-          </button>
+          </Button>
         ) : null}
       </div>
       {allGoals.map((goal, index) => (
         <div key={index}>
           <hr />
-          <img src={goal.pictureUrl} alt={goal.description} />
-          <h4>{goal.goalText}</h4>
-          <h4>{`Likes: ${goal.likes.length}`} </h4>
-          <div className='center'>
-            <button onClick={() => navigate(`/goals/${goal._id}`)}>
-              View Goal Details
-            </button>
-            {userId && goal.user_id._id.toString() === userId.toString() ? (
-              <button onClick={() => navigate(`/goals/${goal._id}/edit`)}>
-                Edit Goal
-              </button>
-            ) : null}
-            {userId && goal.user_id._id.toString() === userId.toString() ? (
-              <button onClick={() => deleteGoalHandler(goal._id)}>
-                Delete Goal
-              </button>
-            ) : null}
-            {goal.user_id ? (
-              <Link to={`/user/goals/${goal.user_id._id}`}>
-                Added By: {goal.user_id.firstName}
-              </Link>
-            ) : null}
-          </div>
+          <Grid container>
+            <Grid item xs={5}>
+              <img src={goal.pictureUrl} alt={goal.description} />
+            </Grid>
+            <Grid item xs={7}>
+              <GoalCard goal={goal} userId={userId} />
+              {userId && goal.user_id._id.toString() === userId.toString() ? (
+                <Button
+                  size='small'
+                  variant='contained'
+                  color='primary'
+                  onClick={() => navigate(`/goals/${goal._id}/edit`)}
+                >
+                  Edit Goal
+                </Button>
+              ) : null}
+              {userId && goal.user_id._id.toString() === userId.toString() ? (
+                <Button
+                  size='small'
+                  variant='contained'
+                  color='secondary'
+                  onClick={() => deleteGoalHandler(goal._id)}
+                >
+                  Delete Goal
+                </Button>
+              ) : null}
+            </Grid>
+          </Grid>
+          {/* <hr />
+          <Grid container>
+            <Grid item xs={6}>
+              <img src={goal.pictureUrl} alt={goal.description} />
+            </Grid>
+            <Grid item xs={6}>
+              <Paper variant='outlined'>
+                <Typography variant='h6' color='textPrimary'>
+                  {`Goal: ${goal.goalText}`}
+                </Typography>
+                <Typography
+                  variant='subtitle1'
+                  color='primaryText'
+                >{`Likes: ${goal.likes.length}`}</Typography>
+                <div className='center'>
+                  <Button
+                    variant='outlined'
+                    color='primary'
+                    onClick={() => navigate(`/goals/${goal._id}`)}
+                  >
+                    View Goal Details
+                  </Button>
+                  {userId &&
+                  goal.user_id._id.toString() === userId.toString() ? (
+                    <Button
+                      variant='outlined'
+                      color='primary'
+                      onClick={() => navigate(`/goals/${goal._id}/edit`)}
+                    >
+                      Edit Goal
+                    </Button>
+                  ) : null}
+                  {userId &&
+                  goal.user_id._id.toString() === userId.toString() ? (
+                    <Button
+                      variant='outlined'
+                      color='secondary'
+                      onClick={() => deleteGoalHandler(goal._id)}
+                    >
+                      Delete Goal
+                    </Button>
+                  ) : null}
+                  {goal.user_id ? (
+                    <Button
+                      variant='outlined'
+                      onClick={() =>
+                        navigate(`/user/goals/${goal.user_id._id}`)
+                      }
+                    >
+                      Added By: {goal.user_id.firstName}
+                    </Button>
+                  ) : null}
+                </div>
+              </Paper>
+            </Grid>
+          </Grid> */}
         </div>
       ))}
     </div>

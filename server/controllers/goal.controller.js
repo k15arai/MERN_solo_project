@@ -35,10 +35,7 @@ const addNewGoal = (req, res) => {
 const findAllGoals = (req, res) => {
   Goal.find({})
     .populate("user_id", "firstName _id")
-    .populate("comments", "_id comment")
-    .populate("likes", "user_id")
-    .sort({ likes: "descending" })
-    // sort by something
+    .sort({ likesLength: "descending" })
     .then((allGoals) => {
       console.log("Show all goals section");
       res.json(allGoals);
@@ -58,10 +55,10 @@ const getAllGoalsByUser = (req, res) => {
     .populate("user_id", "firstName _id email")
     .populate({
       path: "comments",
-      options: { limit: 2 },
+      options: { limit: 2, sort: { createdAt: -1 } },
       populate: { path: "user_id" },
     })
-    .sort({ likes: "descending" })
+    .sort({ likesLength: "descending" })
     .then((allUserGoals) => {
       console.log("success - returning all user goals");
       res.json(allUserGoals);
@@ -84,7 +81,6 @@ const findOneGoal = (req, res) => {
     .populate("user_id", "_id firstName email")
     .populate({
       path: "comments",
-      options: { limit: 5 },
       populate: { path: "user_id" },
     })
     // then / catch
@@ -167,6 +163,7 @@ const likeGoal = async (req, res) => {
       {
         // syntax for MongoDB
         $push: { likes: decodedJwt.payload._id },
+        $inc: { likesLength: 1 },
       },
       {
         new: true,
@@ -202,6 +199,7 @@ const removeGoalLike = async (req, res) => {
       goal.likes.filter((like) => like._id.toString() == decodedJwt.payload._id)
         .length === 0
     ) {
+      console.log("in section where no like was found");
       return res
         .status(400)
         .json({ msg: "Goal has not yet been liked by user" });
@@ -214,6 +212,7 @@ const removeGoalLike = async (req, res) => {
       {
         // syntax for MongoDB
         $pull: { likes: decodedJwt.payload._id },
+        $inc: { likesLength: -1 },
       },
       {
         new: true,
@@ -228,7 +227,7 @@ const removeGoalLike = async (req, res) => {
       });
   } catch (err) {
     console.log("error in update likes skiff: " + err);
-    res.json(err);
+    res.json({ msg: "Error in the catch" });
   }
 };
 

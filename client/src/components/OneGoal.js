@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { navigate } from "@reach/router";
+import { Button, Typography, Paper } from "@material-ui/core";
 
 const OneGoal = (props) => {
   const { id } = props;
-  const [goal, setGoal] = useState({});
-  const [errs, setErrs] = useState({});
+  const [goal, setGoal] = useState([]);
+  const [likeErrs, setLikeErrs] = useState("");
+  const [cmtErrs, setCmtErrs] = useState("");
   const [commentText, setCommentText] = useState("");
+  const [userId, setUserId] = useState("");
   const [onSubmitDummy, setOnSubmitDummy] = useState(false);
 
   useEffect(() => {
@@ -26,6 +29,10 @@ const OneGoal = (props) => {
     getData();
   }, [onSubmitDummy, id]);
 
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId"));
+  }, []);
+
   const addLikeHandler = () => {
     axios
       .put(
@@ -39,18 +46,14 @@ const OneGoal = (props) => {
         }
       )
       .then((likedGoal) => {
-        if (likedGoal.data.errors) {
-          console.log(likedGoal);
-          console.log(likedGoal.data.errors);
-          setErrs(likedGoal.data.errors);
-        } else {
-          console.log(likedGoal.data);
-          setOnSubmitDummy(!onSubmitDummy);
-          navigate(`/goals/${likedGoal.data._id}`);
-        }
+        console.log(likedGoal.data);
+        setOnSubmitDummy(!onSubmitDummy);
+        navigate(`/goals/${likedGoal.data._id}`);
+        setLikeErrs("");
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data.msg);
+        setLikeErrs(err.response.data.msg);
       });
   };
 
@@ -67,18 +70,14 @@ const OneGoal = (props) => {
         }
       )
       .then((removeLikeGoal) => {
-        if (removeLikeGoal.data.errors) {
-          console.log(removeLikeGoal);
-          console.log(removeLikeGoal.data.errors);
-          setErrs(removeLikeGoal.data.errors);
-        } else {
-          console.log(removeLikeGoal.data);
-          setOnSubmitDummy(!onSubmitDummy);
-          navigate(`/goals/${removeLikeGoal.data._id}`);
-        }
+        console.log(removeLikeGoal.data);
+        setOnSubmitDummy(!onSubmitDummy);
+        navigate(`/goals/${removeLikeGoal.data._id}`);
+        setLikeErrs("");
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data.msg);
+        setLikeErrs(err.response.data.msg);
       });
   };
 
@@ -96,77 +95,121 @@ const OneGoal = (props) => {
       );
       console.log(response);
       setCommentText("");
+      setCmtErrs("");
       setOnSubmitDummy(!onSubmitDummy);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err.response.data.errors);
+      setCmtErrs(err.response.data.errors.comment.message);
     }
   };
 
   return (
     <div>
-      {errs ? <></> : null}
-      <h2>{goal.goalText}</h2>
+      {/* {errs ? <></> : null} */}
       <img src={goal.pictureUrl} alt={goal.description} />
       <div className='center'>
-        <p>Goal: {goal.goalText}</p>
-        <p>Status: {goal.goalStatus}</p>
-        <p>
-          Target Finish Date:{" "}
-          {new Date(goal.targetFinishDate).toLocaleDateString("en-us")}
-        </p>
-        {/* Need to insert a ternary to not let it blow up if a user_id is not found */}
-        {goal.user_id ? (
-          <>
-            <p>Poster: {goal.user_id._id}</p>
-            <p>Posted By: {goal.user_id.firstName}</p>
-            <p>Poster email address: {goal.user_id.email}</p>
-          </>
-        ) : null}
-
+        <Paper>
+          <Typography variant='h6' color='inherit'>
+            Goal: {goal.goalText}
+          </Typography>
+          <Typography variant='body1' color='textPrimary'>
+            Status: {goal.goalStatus}
+          </Typography>
+          <Typography variant='body1' color='textPrimary'>
+            Target Finish Date:{" "}
+            {new Date(goal.targetFinishDate).toLocaleDateString("en-us")}{" "}
+          </Typography>
+          {/* Need to insert a ternary to not let it blow up if a user_id is not found */}
+          {goal.user_id ? (
+            <>
+              {/* <Typography variant='body1' color='textPrimary'>
+              Poster: {goal.user_id._id}
+            </Typography> */}
+              <Typography variant='body1' color='textPrimary'>
+                Posted By: {goal.user_id.firstName}
+              </Typography>
+              <Typography variant='body1' color='textPrimary'>
+                Poster email address: {goal.user_id.email}
+              </Typography>
+            </>
+          ) : null}
+        </Paper>
         {goal.likes ? (
           <>
-            <p>Likes: {goal.likes.length}</p>
+            <Typography variant='body1' color='textPrimary'>
+              Likes: {goal.likes.length}
+            </Typography>
           </>
         ) : null}
-        <div>
-          <button onClick={addLikeHandler}>Add Like</button>
-          <button onClick={removeLikeHandler}>Remove Like</button>
-        </div>
-        <form onSubmit={(e) => onSubmitCommentHandler(e, goal._id)}>
-          <hr />
-          <h5>ADD COMMENT</h5>
-          {errs.comment ? (
-            <span className='error-text'>{errs.comment.message}</span>
-          ) : null}
-          <textarea
-            name=''
-            id=''
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            cols='30'
-            rows='4'
-          ></textarea>
-          <div className='center'>
-            <button type='submit'>Add Comment</button>
-          </div>
-        </form>
+        {userId ? (
+          <>
+            {likeErrs ? <span className='error-text'>{likeErrs}</span> : null}
+            <div>
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={addLikeHandler}
+              >
+                Add Like
+              </Button>
+              <Button
+                variant='contained'
+                color='secondary'
+                onClick={removeLikeHandler}
+              >
+                Remove Like
+              </Button>
+            </div>
+            <form onSubmit={(e) => onSubmitCommentHandler(e, goal._id)}>
+              <hr />
+              {cmtErrs ? <span className='error-text'>{cmtErrs}</span> : null}
+              <Typography variant='h5' color='textPrimary'>
+                ADD COMMENT
+              </Typography>
+              <textarea
+                name=''
+                id=''
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                cols='30'
+                rows='4'
+              ></textarea>
+              <div className='center'>
+                <Button variant='contained' color='primary' type='submit'>
+                  Add Comment
+                </Button>
+              </div>
+            </form>
+          </>
+        ) : null}
         <hr />
         {goal.comments ? (
           <>
             {goal.comments.map((comment, index) => (
               <div className='comment-style' key={"comment_" + index}>
-                <p>{comment.comment}</p>
-                Posted on:
-                {new Date(comment.commentDate).toLocaleDateString(
-                  "en-us"
-                )} By: {comment.user_id.firstName}
+                <p></p>
+                <Typography variant='body1' color='textPrimary'>
+                  {comment.comment}
+                </Typography>
+                <Typography variant='body1' color='textSecondary'>
+                  Posted on:
+                  {new Date(comment.commentDate).toLocaleDateString(
+                    "en-us"
+                  )}{" "}
+                  By: {comment.user_id.firstName}
+                </Typography>
               </div>
             ))}
           </>
         ) : null}
-
         <div>
-          <button onClick={() => navigate("/goals")}>See All Goals</button>
+          <Button
+            variant='outlined'
+            color='primary'
+            onClick={() => navigate("/goals")}
+          >
+            See All Goals
+          </Button>
         </div>
       </div>
     </div>

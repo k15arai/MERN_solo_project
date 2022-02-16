@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { navigate } from "@reach/router";
+import { Button, Paper, Typography } from "@material-ui/core";
 
 const UserProfile = (props) => {
   const [userGoalsList, setUserGoalsList] = useState([]);
@@ -24,22 +25,33 @@ const UserProfile = (props) => {
         <div key={"user-goals" + index}>
           <img src={goal.pictureUrl} alt={goal.description} />
           <div className='center'>
-            <p>Goal: {goal.goalText}</p>
-            <p>Status: {goal.goalStatus}</p>
-            <p>
-              Target Finish Date:{" "}
-              {new Date(goal.targetFinishDate).toLocaleDateString("en-us")}
-            </p>
-            <p>Number of Likes: {goal.likes.length}</p>
-
-            {/* Need to insert a ternary to not let it blow up if a user_id is not found */}
-            {goal.user_id ? (
-              <>
-                {/* <p>Poster: {goal.user_id._id}</p> */}
-                <p>Posted By: {goal.user_id.firstName}</p>
-                <p>Poster email address: {goal.user_id.email}</p>
-              </>
-            ) : null}
+            <Paper>
+              <Typography variant='h6' color='inherit'>
+                Goal: {goal.goalText}
+              </Typography>
+              <Typography variant='body1' color='textPrimary'>
+                Status: {goal.goalStatus}
+              </Typography>
+              <Typography variant='body1' color='textPrimary'>
+                Target Finish Date:{" "}
+                {new Date(goal.targetFinishDate).toLocaleDateString("en-us")}{" "}
+              </Typography>
+              {goal.user_id ? (
+                <>
+                  <Typography variant='body1' color='textPrimary'>
+                    Posted By: {goal.user_id.firstName}
+                  </Typography>
+                  <Typography variant='body1' color='textPrimary'>
+                    Poster email address: {goal.user_id.email}
+                  </Typography>
+                </>
+              ) : null}
+              {goal.likes ? (
+                <Typography variant='body1' color='textPrimary'>
+                  Likes: {goal.likes.length}
+                </Typography>
+              ) : null}
+            </Paper>
             <hr />
             {goal.comments ? (
               <>
@@ -59,7 +71,13 @@ const UserProfile = (props) => {
         </div>
       ))}
       <div>
-        <button onClick={() => navigate("/goals")}>See All Goals</button>
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={() => navigate("/goals")}
+        >
+          See All Goals
+        </Button>
       </div>
     </div>
   );

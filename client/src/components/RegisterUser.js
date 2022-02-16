@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Button } from "@material-ui/core";
 
 const RegisterUser = (props) => {
   const [firstName, setFirstName] = useState("");
@@ -131,7 +132,9 @@ const RegisterUser = (props) => {
           />
         </div>
         <div className='center'>
-          <button type='submit'>Register Me</button>
+          <Button variant='contained' color='primary' type='submit'>
+            Register Me
+          </Button>
         </div>
       </form>
     </div>

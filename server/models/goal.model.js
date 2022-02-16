@@ -55,6 +55,9 @@ const GoalSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    likesLength: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

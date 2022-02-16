@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { navigate } from "@reach/router";
+import { Button, Typography, Box, TextField } from "@material-ui/core";
 
 const NewGoal = () => {
   const [goalText, setGoalText] = useState("");
@@ -31,17 +32,13 @@ const NewGoal = () => {
           withCredentials: true,
         }
       )
-      .then((newGoal) => {
-        if (newGoal.data.errors) {
-          console.log(newGoal.data.errors);
-          setErrs(newGoal.data.errors);
-        } else {
-          console.log(newGoal.data);
-          navigate(`/goals/${newGoal.data._id}`);
-        }
+      .then((response) => {
+        console.log(response.data);
+        navigate(`/goals/${response.data._id}`);
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data.errors);
+        setErrs(err.response.data.errors);
       });
   };
 
@@ -103,8 +100,16 @@ const NewGoal = () => {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <button type='submit'>Add My Goal</button>
-        <button onClick={() => navigate("/goals")}>Back to All Goals</button>
+        <Button variant='contained' color='primary' type='submit'>
+          Add My Goal
+        </Button>
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={() => navigate("/goals")}
+        >
+          Back to All Goals
+        </Button>
       </form>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { navigate } from "@reach/router";
+import { Button } from "@material-ui/core";
 
 const EditGoal = (props) => {
   const { goalId } = props;
@@ -99,7 +100,7 @@ const EditGoal = (props) => {
             <span className='error-text'>{errs.targetFinishDate.message}</span>
           ) : null}
           <input
-            type='date'
+            type='text'
             name='targetFinishDate'
             value={targetFinishDate}
             onChange={(e) => setTargetFinishDate(e.target.value)}
@@ -123,9 +124,17 @@ const EditGoal = (props) => {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <button type='submit'>Edit My Goal</button>
-        <button onClick={() => navigate("/goals")}>Back to All Goals</button>
+        <Button variant='contained' color='primary' onClick={submitHandler}>
+          Edit My Goal
+        </Button>
       </form>
+      <Button
+        color='inherit'
+        variant='outlined'
+        onClick={() => navigate("/goals")}
+      >
+        See All Goals
+      </Button>
     </div>
   );
 };

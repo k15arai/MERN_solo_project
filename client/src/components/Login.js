@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { navigate } from "@reach/router";
 import axios from "axios";
+import { Button } from "@material-ui/core";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
@@ -60,7 +61,9 @@ const Login = (props) => {
           />
         </div>
         <div className='center'>
-          <button type='subit'>Login</button>
+          <Button variant='contained' color='primary' type='subit'>
+            Login
+          </Button>
         </div>
       </form>
     </div>

@@ -2,6 +2,7 @@ import React from "react";
 import { navigate } from "@reach/router";
 import Login from "../components/Login";
 import RegisterUser from "../components/RegisterUser";
+import { Button } from "@material-ui/core";
 
 const LogReg = () => {
   return (
@@ -10,7 +11,13 @@ const LogReg = () => {
       <hr />
       <RegisterUser />
       <div>
-        <button onClick={() => navigate("/goals")}>Back to All Goals</button>
+        <Button
+          variant='outlined'
+          color='primary'
+          onClick={() => navigate("/goals")}
+        >
+          See All Goals
+        </Button>
       </div>
     </div>
   );

@@ -80,27 +80,47 @@ const Header = () => {
             {/* <Button color='inherit'>Login</Button> */}
             <Button
               color='inherit'
+              size='small'
               variant='outlined'
               onClick={() => navigate("/goals")}
             >
               See All Goals
             </Button>
-            {!userId ? (
+            {/* {!userId ? (
               <Button variant='outlined' onClick={() => navigate("/")}>
                 Login to edit and add goals
               </Button>
-            ) : null}
-            <Button variant='outlined' color='secondary' onClick={logout}>
+            ) : null} */}
+            <Button
+              size='small'
+              variant='outlined'
+              onClick={() => navigate("/")}
+            >
+              Login to edit and add goals
+            </Button>
+            <Button
+              size='small'
+              variant='outlined'
+              color='secondary'
+              onClick={logout}
+            >
               Logout
             </Button>
-            {userId ? (
+            {/* {userId ? (
               <Button
                 variant='outlined'
                 onClick={() => navigate(`/user/goals/${userId}`)}
               >
                 Profile
               </Button>
-            ) : null}
+            ) : null} */}
+            <Button
+              variant='outlined'
+              size='small'
+              onClick={() => navigate(`/user/goals/${userId}`)}
+            >
+              Profile
+            </Button>
           </Toolbar>
         </AppBar>
       </Box>

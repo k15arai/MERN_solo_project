@@ -7,7 +7,9 @@ const NewGoal = () => {
   const [goalText, setGoalText] = useState("");
   const [goalStatus, setGoalStatus] = useState("");
   const [targetFinishDate, setTargetFinishDate] = useState("");
-  const [pictureUrl, setPictureUrl] = useState("");
+  const [pictureUrl, setPictureUrl] = useState(
+    "http://www.strongrunnerchicks.com/wp-content/uploads/2017/10/Grit-definition.jpg"
+  );
   const [description, setDescription] = useState("");
   // expects an object
   const [errs, setErrs] = useState({});
